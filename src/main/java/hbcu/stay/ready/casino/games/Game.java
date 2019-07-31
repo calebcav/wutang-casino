@@ -1,4 +1,4 @@
-package hbcu.stay.ready.casino;
+package hbcu.stay.ready.casino.games;
 
 public interface Game {
 
