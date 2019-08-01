@@ -1,6 +1,5 @@
 package hbcu.stay.ready.casino.carddeck;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 
@@ -41,6 +40,7 @@ public class Deck {
     }
 
     public Card takeTopCard(){
-        return cards.remove(0);
+        return cards.pop();
     }
+
 }
