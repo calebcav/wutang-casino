@@ -77,5 +77,22 @@ public class PlayerTest {
         Assert.assertEquals(expected, actual);
     }
 
+    @Test
+    public void addAllHandToTest(){
+
+        ArrayList<Card> randomHand = new ArrayList<Card>();
+
+        randomHand.add(deck.takeTopCard());
+        randomHand.add(deck.takeTopCard());
+        player.addAllToHand(randomHand);
+
+        Integer actual = player.getHand().size();
+        Integer expected = 2;
+
+        Assert.assertEquals(expected, actual);
+
+
+    }
+
 
 }

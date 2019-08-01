@@ -6,8 +6,8 @@ import java.util.ArrayList;
 public class Player {
 
     private String name;
-    private ArrayList<Card> hand;
-    private Integer sets;
+    private ArrayList<Card> hand = new ArrayList<Card>();
+    private Integer books;
 
     public Player(String name){
         this.name = name;
@@ -16,6 +16,14 @@ public class Player {
 
     public Player(){
         this.name = "Steve";
+    }
+
+    public Integer getBooks(){
+        return books;
+    }
+
+    public void setBooks(Integer books){
+        this.books = books;
     }
 
     public String getString(){
@@ -46,15 +54,13 @@ public class Player {
         System.out.println("----------");
     }
 
-    public void addToSet(){
-        sets ++;
+    public void addToBooks(){
+        books ++;
     }
 
     public void addAllToHand(ArrayList<Card> cards){
         hand.addAll(cards);
     }
-
-
 
 
 }

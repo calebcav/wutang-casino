@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import hbcu.stay.ready.casino.utilities.Console;
 import hbcu.stay.ready.casino.carddeck.*;
-import java.util.*;
 
 public class GoFishTest {
 
@@ -52,6 +51,28 @@ public class GoFishTest {
     }
 
     @Test
+    public void askTest2(){
+        Deck deck = new Deck();
+        playerOne.addHand(deck.takeTopCard());
+        playerOne.addHand(deck.takeTopCard());
+        playerOne.addHand(deck.takeTopCard());
+        playerOne.addHand(deck.takeTopCard());
+
+        dealer.addHand(deck.takeTopCard());
+        dealer.addHand(deck.takeTopCard());
+        dealer.addHand(deck.takeTopCard());
+        dealer.addHand(deck.takeTopCard());
+
+
+        playerOne.addAllToHand(goFish.ask(CardValueEnum.TEN, dealer));
+
+        Integer actual = dealer.getHand().size();
+        Integer expected = 3;
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
     public void addAllToHandTest(){
 
         Deck deck = new Deck();
@@ -68,7 +89,6 @@ public class GoFishTest {
 
         Assert.assertEquals(expected, actual);
     }
-
 
 
 

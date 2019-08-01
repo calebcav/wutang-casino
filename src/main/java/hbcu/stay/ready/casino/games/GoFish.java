@@ -4,13 +4,14 @@ import hbcu.stay.ready.casino.carddeck.*;
 import hbcu.stay.ready.casino.utilities.Console;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class GoFish extends CardGame {
 
     private Deck deck = new Deck();
-    private Player playerOne;
-    private Player playerTwo;
-    private Player dealer = new Player("Dealer");
+    private Player playerOne = new Player();
+    private Player playerTwo = new Player();
+
 
     public GoFish(Console console, Player playerOne){
 
@@ -21,32 +22,68 @@ public class GoFish extends CardGame {
     public void playGame() {
         deck = new Deck();
         deck.shuffleCards();
-        playerOne = new Player();
         playerTwo = new Player();
 
 
         console.println("Welcome to Go Fish");
         console.println("You just drew seven cards");
-        playerOne.printHand();
 
         for(int i = 0; i < 7; i ++){
             playerOne.addHand(deck.takeTopCard());
+            playerTwo.addHand(deck.takeTopCard());
         }
         while (deck.getCards().size() > 0){
             if (checkDictionary(createDictionary(playerOne.getHand()))){
-                playerOne.addToSet();
+                playerOne.addToBooks();
             }
+
+            if (checkDictionary(createDictionary(playerTwo.getHand()))){
+                playerTwo.addToBooks();
+            }
+            playerOne.printHand();
+            playerTwo.printHand();
             String input = console.getStringInput("Do you have any...");
-            playerOne.addAllToHand(ask(askValue(input), playerOne));
+
+            ArrayList<Card> cardRequest = ask(askValue(input), playerTwo);
+            System.out.println(cardRequest + " is what you wanted");
 
 
 
+            if (cardRequest.size() > 0){
+                playerOne.addAllToHand(cardRequest);
+            }
+            else{
+                console.println("Go Fish Pussy");
+                playerOne.addHand(deck.takeTopCard());
+            }
 
 
+
+            CardValueEnum playerTwoInput = lookingForCard(createDictionary(playerTwo.getHand()));
+
+
+            ArrayList<Card> playerTwoCardRequest = ask(playerTwoInput, playerOne);
+
+
+
+            if (playerTwoCardRequest.size() > 0){
+                playerTwo.addAllToHand(playerTwoCardRequest);
+            }
+            else{
+                console.println("Player Two draws Card");
+                playerTwo.addHand(deck.takeTopCard());
+            }
         }
 
-
-
+        if (playerOne.getBooks() > playerTwo.getBooks()){
+            console.println("Player One wins!");
+        }
+        else if (playerTwo.getBooks() > playerOne.getBooks()){
+            console.println("Player Two wins!");
+        }
+        else{
+            console.println("Tie");
+        }
     }
 
     public String info() {
@@ -54,14 +91,12 @@ public class GoFish extends CardGame {
         return "Go Fish!";
     }
 
+    private static HashMap<CardValueEnum, Integer> createDictionary(ArrayList<Card> hand){
 
-
-    private static HashMap<String, Integer> createDictionary(ArrayList<Card> hand){
-
-        HashMap<String, Integer> dictionary = new HashMap<String, Integer>();
+        HashMap<CardValueEnum, Integer> dictionary = new HashMap<CardValueEnum, Integer>();
 
         for (int i = 0; i < hand.size(); i ++){
-            String card = hand.get(i).getCardValueEnum().toString();
+            CardValueEnum card = hand.get(i).getCardValueEnum();
             if(!dictionary.containsKey(card)){
                 dictionary.put(card, 1);
             }
@@ -73,9 +108,9 @@ public class GoFish extends CardGame {
     }
 
 
-    private static boolean checkDictionary(HashMap<String, Integer> map){
+    private static boolean checkDictionary(HashMap<CardValueEnum, Integer> map){
 
-        for (Map.Entry<String, Integer> entry: map.entrySet()){
+        for (Map.Entry<CardValueEnum, Integer> entry: map.entrySet()){
             if (entry.getValue() == 4){
                 return true;
             }
@@ -83,15 +118,27 @@ public class GoFish extends CardGame {
         return false;
     }
 
+    private static CardValueEnum lookingForCard(HashMap<CardValueEnum, Integer> map){
+        int greatestValue = 0;
+        CardValueEnum greatestCard = null;
+        for(Map.Entry<CardValueEnum, Integer> entry: map.entrySet()){
+            if (entry.getValue() > greatestValue){
+                greatestCard = entry.getKey();
+                greatestValue = entry.getValue();
+            }
+        }
+        return greatestCard;
+    }
+
 
     public ArrayList<Card> ask(CardValueEnum value, Player player){
 
-        ArrayList<Card> list = player.getHand();
         ArrayList<Card> expectedList = new ArrayList<Card>();
 
-        for (int i = 0; i < list.size(); i ++){
-            if (list.get(i).getCardValueEnum() == value){
-                expectedList.add(list.get(i));
+        for (int i = 0; i < player.getHand().size(); i ++){
+            if (player.getHand().get(i).getCardValueEnum() == value){
+                expectedList.add(player.getHand().get(i));
+                player.getHand().remove(i);
             }
         }
 
@@ -136,6 +183,9 @@ public class GoFish extends CardGame {
         }
         else if (value == "King"){
             return CardValueEnum.KING;
+        }
+        else if (value == "Ace"){
+            return CardValueEnum.ACE;
         }
         return null;
 
